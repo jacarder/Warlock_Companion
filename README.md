@@ -1,6 +1,8 @@
-# Getting Started with Create React App
+# Warlock Companion
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+App for the tabletop rpg Warlock!. Using React framework with firebase.
+
+Idea is to have quick access to resources without having to rummage through the book.
 
 ## Available Scripts
 
