@@ -5,22 +5,25 @@ import PlayerService from '../../services/PlayerService';
 import { AuthContext } from '../../config/auth-context';
 
 interface CharacterSelectionProps {
+  defaultCharacterId: string,
   onSelectionChange: (characterId: string) => void
 }
 
-const CharacterSelection: FC<CharacterSelectionProps> = ({onSelectionChange}) => {
+const CharacterSelection: FC<CharacterSelectionProps> = ({defaultCharacterId, onSelectionChange}) => {
   const [characterList, setCharacterList] = useState<ICharacter[] | null>(null)
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string>('1')
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string>('')
   const auth = useContext(AuthContext);
   const userId = auth.user?.uid as string;
+  
   useEffect(() => {
     PlayerService.getPlayerCharacters(userId).then((characters) => {
       setCharacterList(characters);
-      onSelectionChange(selectedCharacterId);
+      setSelectedCharacterId(defaultCharacterId);
+      //onSelectionChange(characterId);
     }).catch(() => {
       setCharacterList(null);
     });
-  }, [])
+  }, [defaultCharacterId])
   const handleSelectChange = (event: SelectChangeEvent) => {
     const id = event.target.value;
     setSelectedCharacterId(id)
@@ -35,9 +38,11 @@ const CharacterSelection: FC<CharacterSelectionProps> = ({onSelectionChange}) =>
             labelId="character-selection-label-id"
             id="character-selection-id"
             label="Character"
+            placeholder='Create New Character'
             value={selectedCharacterId}
             onChange={handleSelectChange}
           >
+            <MenuItem key='' value={''}>Create New Character</MenuItem>
             {characterList?.map((character) => {
               return (
                 <MenuItem key={character.id} value={character.id}>{character.name}</MenuItem>

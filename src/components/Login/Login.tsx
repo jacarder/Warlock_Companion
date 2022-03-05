@@ -12,7 +12,6 @@ const Login = (props: Props) => {
   const navigator = useNavigate();
   useEffect(() => {
     //  redirect to home if logged in already
-    console.log()
     if(auth.user) {
       navigator(`${MenuPages.HOME}`);
     }

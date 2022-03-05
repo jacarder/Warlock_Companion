@@ -12,11 +12,13 @@ const PlayerSheet: FC<PlayerSheetProps> = () => {
   const handleSelectionChange = (characterId: string) => {
     setCharacterId(characterId);
   }
-
+  const handleOnSave = (characterId: string) => {
+    setCharacterId(characterId);
+  }
   return (
     <Box component="form">
-      <CharacterSelection onSelectionChange={handleSelectionChange}/>
-      <CharacterInfo characterId={characterId}/>
+      <CharacterSelection defaultCharacterId={characterId} onSelectionChange={handleSelectionChange}/>
+      <CharacterInfo characterId={characterId} onSave={handleOnSave}/>
     </Box>
   )
 };

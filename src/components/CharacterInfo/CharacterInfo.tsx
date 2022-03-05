@@ -4,9 +4,11 @@ import MuiGrid from '@mui/material/Grid';
 import { ICharacterData } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
 import { AuthContext } from '../../config/auth-context';
+import * as uuid from 'uuid';
 
 interface CharacterInfoProps {
-  characterId: string
+  characterId: string,
+  onSave: (characterId: string) => void
 }
 
 const Grid = styled(MuiGrid)(({ theme }) => ({
@@ -17,7 +19,7 @@ const Grid = styled(MuiGrid)(({ theme }) => ({
   },
 }));
 
-const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
+const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
   const auth = useContext(AuthContext);
   const userId = auth.user?.uid as string;
@@ -52,7 +54,17 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
   } 
 
   const handleSubmit = () => {
-    PlayerService.savePlayerCharacter(userId, characterId, (character as ICharacterData))
+    
+    const charId = characterId ? characterId : uuid.v4()
+    PlayerService.savePlayerCharacter(
+      userId, 
+      charId,
+      ({
+        ...character,
+        id: charId
+      } as ICharacterData)
+    );
+    onSave(charId)
   }
 
   return (
