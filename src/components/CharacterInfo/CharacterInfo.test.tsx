@@ -5,7 +5,7 @@ import CharacterInfo from './CharacterInfo';
 
 describe('<CharacterInfo />', () => {
   test('it should mount', () => {
-    render(<CharacterInfo />);
+    render(<CharacterInfo characterId=''/>);
     
     const characterInfo = screen.getByTestId('CharacterInfo');
 

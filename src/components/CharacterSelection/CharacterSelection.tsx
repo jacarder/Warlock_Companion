@@ -1,40 +1,49 @@
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Box, Container, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import { ICharacter } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
 
-interface CharacterSelectionProps {}
+interface CharacterSelectionProps {
+  onSelectionChange: (characterId: string) => void
+}
 
-const CharacterSelection: FC<CharacterSelectionProps> = () => {
+const CharacterSelection: FC<CharacterSelectionProps> = ({onSelectionChange}) => {
   const [characterList, setCharacterList] = useState<ICharacter[] | null>(null)
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string>('1')
   useEffect(() => {
     PlayerService.getPlayerCharacters().then((characters) => {
       setCharacterList(characters);
+      onSelectionChange(selectedCharacterId);
     }).catch(() => {
       setCharacterList(null);
     });
   }, [])
   const handleSelectChange = (event: SelectChangeEvent) => {
-    console.log(event.target)
+    const id = event.target.value;
+    setSelectedCharacterId(id)
+    onSelectionChange(id);
   }
   return (
-    <Box sx={{ width: '25%' }}>
-      <FormControl fullWidth>
-        <InputLabel>Character</InputLabel>
-        <Select
-          labelId="character-selection-label-id"
-          id="character-selection-id"
-          label="Character"
-          onChange={handleSelectChange}
-        >
-          {characterList?.map((character) => {
-            return (
-              <MenuItem value={character.id}>{character.name}</MenuItem>
-            )
-          })}
-        </Select>
-      </FormControl>
-    </Box>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={5} sx={{mb: 3}}> 
+        <FormControl fullWidth >
+          <InputLabel>Character</InputLabel>
+          <Select
+            labelId="character-selection-label-id"
+            id="character-selection-id"
+            label="Character"
+            value={selectedCharacterId}
+            onChange={handleSelectChange}
+          >
+            {characterList?.map((character) => {
+              return (
+                <MenuItem key={character.id} value={character.id}>{character.name}</MenuItem>
+              )
+            })}
+          </Select>
+        </FormControl>
+      </Grid>
+    </Grid>
   )
 }
 

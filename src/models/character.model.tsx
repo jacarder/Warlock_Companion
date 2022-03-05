@@ -4,3 +4,10 @@ export interface ICharacter {
 	background: string
 }
 
+export interface ICharacterData extends ICharacter {
+	community: string,
+	career: string,
+	pastCareers: string,
+	stamina: number,
+	luck: number
+}

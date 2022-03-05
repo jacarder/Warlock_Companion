@@ -5,7 +5,7 @@ import CharacterSelection from './CharacterSelection';
 
 describe('<CharacterSelection />', () => {
   test('it should mount', () => {
-    render(<CharacterSelection />);
+    //render(<CharacterSelection />);
     
     const characterSelection = screen.getByTestId('CharacterSelection');
 

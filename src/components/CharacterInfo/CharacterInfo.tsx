@@ -1,8 +1,12 @@
 import { TextField, Box, Typography, Divider, styled } from '@mui/material';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
+import { ICharacterData } from '../../models/character.model';
+import PlayerService from '../../services/PlayerService';
 
-interface CharacterInfoProps {}
+interface CharacterInfoProps {
+  characterId: string
+}
 
 const Grid = styled(MuiGrid)(({ theme }) => ({
   width: '100%',
@@ -12,8 +16,15 @@ const Grid = styled(MuiGrid)(({ theme }) => ({
   },
 }));
 
-const CharacterInfo: FC<CharacterInfoProps> = () => {
-  const createFormField = (name: string, value: string = '', multilineRows: number = 1) => {
+const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
+  const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
+  useEffect(() => {
+    PlayerService.getPlayerCharacterData(characterId).then((data) => {
+      setCharacter(data);
+    });
+  }, [characterId])
+  
+  const createFormField = (name: string, value: string | number | undefined = '', multilineRows: number = 1) => {
     const id = name.replace('', '-').toLowerCase();
     return (
       <TextField 
@@ -22,7 +33,7 @@ const CharacterInfo: FC<CharacterInfoProps> = () => {
         multiline={multilineRows ? true : false}
         maxRows={multilineRows}
         fullWidth
-        //value={value}
+        value={value || ''}
       />
     )
   }
@@ -30,22 +41,22 @@ const CharacterInfo: FC<CharacterInfoProps> = () => {
     <Box 
       component="form"
       sx={{
-        ml: 3,
+        //ml: 3,
 
         '& .MuiTextField-root': { mb: 1, mt: 1 },
       }}
     >
       <Grid container spacing={2}>
         <Grid item xs={12} sx={{alignItems: 'center'}}>
-          <Typography variant="h2" gutterBottom component="div">
-            Player Information
+          <Typography variant="h4" component="div">
+            Character Information
           </Typography>
         </Grid>
         <Grid item xs={12} md={5}>
-            {createFormField("Name")}
-            {createFormField("Community")}
-            {createFormField("Career")}
-            {createFormField("Past Careers", '', 4)}
+            {createFormField("Name", character?.name)}
+            {createFormField("Community", character?.community)}
+            {createFormField("Career", character?.career)}
+            {createFormField("Past Careers", character?.pastCareers, 4)}
         </Grid>
         {/* TODO Make divider responsive 
         <Divider orientation="vertical" flexItem>
@@ -64,16 +75,16 @@ const CharacterInfo: FC<CharacterInfoProps> = () => {
           }}/>
         </Grid>          
         <Grid item xs={12} md={5}>
-          {createFormField("Background", '', 10)}
+          {createFormField("Background", character?.background, 10)}
         </Grid>
         <Grid item xs={5}>
-          {createFormField("Stamina", '')}
+          {createFormField("Stamina", character?.stamina)}
         </Grid> 
-        <Grid xs={2}>
+        <Grid item xs={2}>
           {/* spacing added between two fields */}
         </Grid>               
         <Grid item xs={5}>
-          {createFormField("Luck", '')}
+          {createFormField("Luck", character?.luck)}
         </Grid>                
         <Grid item xs={12} md={6}>
           <Divider>Skills</Divider>
