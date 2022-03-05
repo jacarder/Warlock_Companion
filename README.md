@@ -4,6 +4,8 @@ App for the tabletop rpg Warlock!. Using React framework with firebase.
 
 Idea is to have quick access to resources without having to rummage through the book.
 
+Try it out -> [Github Pages Integration](https://jacarder.github.io/Warlock_Companion)
+
 ## Available Scripts
 
 In the project directory, you can run:
