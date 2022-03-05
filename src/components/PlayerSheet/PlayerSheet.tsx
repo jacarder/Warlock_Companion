@@ -16,7 +16,7 @@ const PlayerSheet: FC<PlayerSheetProps> = () => {
   return (
     <Box component="form">
       <CharacterSelection onSelectionChange={handleSelectionChange}/>
-      <CharacterInfo characterId={characterId} />
+      <CharacterInfo characterId={characterId}/>
     </Box>
   )
 };

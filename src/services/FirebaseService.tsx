@@ -1,5 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
+import { doc, setDoc, getFirestore, collection, where, query, QueryConstraint, getDocs } from "firebase/firestore"
+
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/auth";
 //import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -34,6 +36,19 @@ class FirebaseService {
   }
   signOut = () => {
     return signOut(this.auth);
+  }
+  getFirestore = () => {
+    return getFirestore();
+  }
+  getData = (table: string, constraint: QueryConstraint[]) => {
+    const db = this.getFirestore();
+    const ref = collection(db, table);
+    const q = query(ref, ...constraint);
+    return getDocs(q);
+  }
+  saveToDatabase = (userId: string, table: string, params: string, data: Object) => {
+    const db = this.getFirestore();
+    setDoc(doc(db, table, params), {...data, userId: userId})
   }
 }
 export default new FirebaseService;

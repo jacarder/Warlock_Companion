@@ -1,7 +1,8 @@
 import { Box, Container, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { ICharacter } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
+import { AuthContext } from '../../config/auth-context';
 
 interface CharacterSelectionProps {
   onSelectionChange: (characterId: string) => void
@@ -10,8 +11,10 @@ interface CharacterSelectionProps {
 const CharacterSelection: FC<CharacterSelectionProps> = ({onSelectionChange}) => {
   const [characterList, setCharacterList] = useState<ICharacter[] | null>(null)
   const [selectedCharacterId, setSelectedCharacterId] = useState<string>('1')
+  const auth = useContext(AuthContext);
+  const userId = auth.user?.uid as string;
   useEffect(() => {
-    PlayerService.getPlayerCharacters().then((characters) => {
+    PlayerService.getPlayerCharacters(userId).then((characters) => {
       setCharacterList(characters);
       onSelectionChange(selectedCharacterId);
     }).catch(() => {

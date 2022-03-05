@@ -1,8 +1,9 @@
-import { TextField, Box, Typography, Divider, styled } from '@mui/material';
-import React, { FC, useEffect, useState } from 'react';
+import { TextField, Box, Typography, Divider, styled, Button } from '@mui/material';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
 import { ICharacterData } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
+import { AuthContext } from '../../config/auth-context';
 
 interface CharacterInfoProps {
   characterId: string
@@ -18,13 +19,15 @@ const Grid = styled(MuiGrid)(({ theme }) => ({
 
 const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
   const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
+  const auth = useContext(AuthContext);
+  const userId = auth.user?.uid as string;
   useEffect(() => {
-    PlayerService.getPlayerCharacterData(characterId).then((data) => {
+    PlayerService.getPlayerCharacterData(userId, characterId).then((data) => {
       setCharacter(data);
     });
   }, [characterId])
   
-  const createFormField = (name: string, value: string | number | undefined = '', multilineRows: number = 1) => {
+  const createFormField = (name: string, formControlName: string, value: string | number | undefined = '', multilineRows: number = 1) => {
     const id = name.replace('', '-').toLowerCase();
     return (
       <TextField 
@@ -33,10 +36,25 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
         multiline={multilineRows ? true : false}
         maxRows={multilineRows}
         fullWidth
+        name={formControlName}
         value={value || ''}
+        onChange={handleFormChange}
       />
     )
   }
+
+  const handleFormChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setCharacter({
+      ...character,
+      [name]: value
+    });
+  } 
+
+  const handleSubmit = () => {
+    PlayerService.savePlayerCharacter(userId, characterId, (character as ICharacterData))
+  }
+
   return (
     <Box 
       component="form"
@@ -53,10 +71,10 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={5}>
-            {createFormField("Name", character?.name)}
-            {createFormField("Community", character?.community)}
-            {createFormField("Career", character?.career)}
-            {createFormField("Past Careers", character?.pastCareers, 4)}
+            {createFormField("Name", "name", character?.name)}
+            {createFormField("Community", "community", character?.community)}
+            {createFormField("Career", "career", character?.career)}
+            {createFormField("Past Careers", "pastCareers", character?.pastCareers, 4)}
         </Grid>
         {/* TODO Make divider responsive 
         <Divider orientation="vertical" flexItem>
@@ -75,16 +93,16 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
           }}/>
         </Grid>          
         <Grid item xs={12} md={5}>
-          {createFormField("Background", character?.background, 10)}
+          {createFormField("Background", "background", character?.background, 10)}
         </Grid>
         <Grid item xs={5}>
-          {createFormField("Stamina", character?.stamina)}
+          {createFormField("Stamina", "stamina", character?.stamina)}
         </Grid> 
         <Grid item xs={2}>
           {/* spacing added between two fields */}
         </Grid>               
         <Grid item xs={5}>
-          {createFormField("Luck", character?.luck)}
+          {createFormField("Luck", "luck", character?.luck)}
         </Grid>                
         <Grid item xs={12} md={6}>
           <Divider>Skills</Divider>
@@ -93,6 +111,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId}) => {
           <Divider>Skills</Divider>
         </Grid>
       </Grid>
+      <Button variant="contained" onClick={handleSubmit}>Save Test</Button>
     </Box>
   );
 };
