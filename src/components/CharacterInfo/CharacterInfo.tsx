@@ -81,6 +81,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
                 id={checkboxIdName} 
                 name={checkboxIdName}
                 checked={checked}
+                onChange={handleSkillCheckboxChange}
               />} 
             label={displayName} 
             sx={{overflowWrap: 'anywhere'}}
@@ -131,7 +132,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     const skill = {
       name: name,
       level: +value,
-      isChecked: true //  TODO get checkbox based on name-checkbox
+      //isChecked: true //  TODO get checkbox based on name-checkbox
     } as ICharacterSkill;
     const existingCharSkill = character?.skills?.find((charSkill) => charSkill.name === skill.name);
     const combinedSkill = merge(existingCharSkill, skill);
@@ -139,7 +140,24 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
       ...character,
       skills: unionBy((character?.skills || []), [combinedSkill], 'name')
     });
+  }
+
+  const handleSkillCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
+    const groupName = name.replace('-checkbox', '');
+    const existingCharSkill = character?.skills?.find((charSkill) => charSkill.name === groupName);
+    const skill = {
+      name: groupName,
+      level: existingCharSkill?.level,
+      isChecked: checked
+    };
+    const combinedSkill = merge(existingCharSkill, skill);
+    setCharacter({
+      ...character,
+      skills: unionBy((character?.skills || []), [combinedSkill], 'name')
+    });
   }   
+
 
   const handleSubmit = () => {
     
