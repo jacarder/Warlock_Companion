@@ -148,7 +148,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     const existingCharSkill = character?.skills?.find((charSkill) => charSkill.name === groupName);
     const skill = {
       name: groupName,
-      level: existingCharSkill?.level,
+      level: existingCharSkill?.level || 0,
       isChecked: checked
     };
     const combinedSkill = merge(existingCharSkill, skill);
@@ -160,7 +160,6 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
 
 
   const handleSubmit = () => {
-    
     const charId = characterId ? characterId : uuid.v4()
     PlayerService.savePlayerCharacter(
       userId, 
