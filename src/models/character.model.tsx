@@ -11,4 +11,10 @@ export interface ICharacterData extends ICharacter {
 	pastCareers?: string,
 	stamina?: number,
 	luck?: number,
+	skills?: ISkill []
+}
+
+export interface ISkill {
+	label: string,
+	formControlName: string
 }

@@ -1,10 +1,11 @@
-import { TextField, Box, Typography, Divider, styled, Button } from '@mui/material';
+import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
-import { ICharacterData } from '../../models/character.model';
+import { ICharacterData, ISkill } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
 import { AuthContext } from '../../config/auth-context';
 import * as uuid from 'uuid';
+import SkillService from '../../services/SkillService';
 
 interface CharacterInfoProps {
   characterId: string,
@@ -21,16 +22,38 @@ const Grid = styled(MuiGrid)(({ theme }) => ({
 
 const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
+  const [skills, setSkills] = useState<{group1: ISkill[], group2: ISkill[]} | undefined>(undefined);
   const auth = useContext(AuthContext);
   const userId = auth.user?.uid as string;
+  useEffect(() => {
+    let skillList = SkillService.getSkillList();
+    const middle = Math.ceil(skillList.length / 2);
+    console.dir(
+      {
+        group1: [...skillList.slice(0, middle)],
+        group2: [...skillList.slice(middle)]
+      }
+    )
+    setSkills({
+      group1: [...skillList.slice(0, middle)],
+      group2: [...skillList.slice(middle)]
+    })
+  }, [])
+  
   useEffect(() => {
     PlayerService.getPlayerCharacterData(userId, characterId).then((data) => {
       setCharacter(data);
     });
   }, [characterId])
   
-  const createFormField = (name: string, formControlName: string, value: string | number | undefined = '', multilineRows: number = 1) => {
-    const id = name.replace('', '-').toLowerCase();
+  const createFormField = (
+    name: string | null, 
+    formControlName: string, 
+    value: string | number | undefined = '', 
+    multilineRows: number = 1,
+    type: React.HTMLInputTypeAttribute = 'text'
+  ) => {
+    const id = formControlName.replace('', '-').toLowerCase();
     return (
       <TextField 
         id={id}
@@ -41,7 +64,50 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
         name={formControlName}
         value={value || ''}
         onChange={handleFormChange}
+        type={type}
       />
+    )
+  }
+
+  const createFormCheckBox = (label: string, formControlName: string, isChecked: boolean, value: string | number | undefined = '') => {
+    const id = label.replace('', '-').toLowerCase(),
+    checkboxName = `${formControlName}-checkbox`,
+    inputName = `${formControlName}-input`
+    return (
+      <>      
+        <Grid item xs={'auto'}>
+          <FormControlLabel 
+            control={
+              <Checkbox 
+                id={id} 
+                name={checkboxName}
+                checked={isChecked}
+              />} 
+            label={label} 
+            sx={{overflowWrap: 'anywhere'}}
+          />
+        </Grid>
+        <Grid item xs={2}> 
+          {createFormField(null, inputName, value, 1, 'number')}
+        </Grid>
+      </>
+    )
+  }
+
+  const createSkillList = (skillList: ISkill[] | undefined) => {
+    return (
+      <> 
+        {
+          skillList?.length ?
+          skillList?.map((skill) => {
+            return (
+              <Grid key={skill.label} container direction="row" alignItems="center" justifyContent={'space-between'}>
+                {createFormCheckBox(skill.label, skill.formControlName, true, 1)}
+              </Grid>
+            )
+          }) : null          
+        }
+      </>
     )
   }
 
@@ -116,11 +182,25 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
         <Grid item xs={5}>
           {createFormField("Luck", "luck", character?.luck)}
         </Grid>                
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={5}>
           <Divider>Skills</Divider>
+          {createSkillList(skills?.group1)}
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={2}>
+          {/* TODO Make divider responsive*/}
+          <Box sx={{ 
+            borderLeft: 1, 
+            height: '100%', 
+            width: '0px', 
+            alignSelf: 'center', 
+            marginRight: '50%', 
+            marginLeft: 'auto',
+            borderColor: 'rgba(0, 0, 0, 0.12)'
+          }}/>
+        </Grid>        
+        <Grid item xs={12} md={5}>
           <Divider>Skills</Divider>
+          {createSkillList(skills?.group2)}
         </Grid>
       </Grid>
       <Button variant="contained" onClick={handleSubmit}>Save Test</Button>

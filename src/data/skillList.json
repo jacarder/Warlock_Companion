@@ -1,0 +1,126 @@
+[
+	{
+		"label": "Apparise",
+		"formControlName": "apparise"
+	},
+	{
+		"label": "Athletics",
+		"formControlName": "athletics"
+	},
+	{
+		"label": "Bargain",
+		"formControlName": "bargain"
+	},
+	{
+		"label": "Blunt",
+		"formControlName": "blunt"
+	},
+	{
+		"label": "Bow",
+		"formControlName": "bow"
+	},
+	{
+		"label": "Brawling",
+		"formControlName": "brawling"
+	},
+	{
+		"label": "Command",
+		"formControlName": "command"
+	},
+	{
+		"label": "Crossbow",
+		"formControlName": "crossbow"
+	},
+	{
+		"label": "Diplomacy",
+		"formControlName": "diplomacy"
+	},
+	{
+		"label": "Disguise",
+		"formControlName": "disguise"
+	},
+	{
+		"label": "Dodge",
+		"formControlName": "dodge"
+	},
+	{
+		"label": "Endurance",
+		"formControlName": "endurance"
+	},
+	{
+		"label": "History",
+		"formControlName": "history"
+	},
+	{
+		"label": "Incantation",
+		"formControlName": "incantation"
+	},
+	{
+		"label": "Intimidate",
+		"formControlName": "intimidate"
+	},
+	{
+		"label": "Large Blade",
+		"formControlName": "largeBlade"
+	},
+	{
+		"label": "Lie",
+		"formControlName": "lie"
+	},
+	{
+		"label": "Medicine",
+		"formControlName": "medicine"
+	},
+	{
+		"label": "Navigation",
+		"formControlName": "navigation"
+	},
+	{
+		"label": "Ostler",
+		"formControlName": "ostler"
+	},
+	{
+		"label": "Persuasion",
+		"formControlName": "persuasion"
+	},
+	{
+		"label": "Pole Arm",
+		"formControlName": "poleArm"
+	},
+	{
+		"label": "Repair",
+		"formControlName": "repair"
+	},
+	{
+		"label": "Sleight of Hand",
+		"formControlName": "sleightOfHand"
+	},
+	{
+		"label": "Small Blade",
+		"formControlName": "smallBlade"
+	},
+	{
+		"label": "Spot",
+		"formControlName": "spot"
+	},
+	{
+		"label": "Stealth",
+		"formControlName": "stealth"
+	},
+	{
+		"label": "Streetwise",
+		"formControlName": "streetwise"
+	},
+	{
+		"label": "Survival",
+		"formControlName": "survival"
+	},
+	{
+		"label": "Swimming",
+		"formControlName": "swimming"
+	},
+	{
+		"label": "Thrown",
+		"formControlName": "thrown"
+	}
+]
