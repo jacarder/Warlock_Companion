@@ -74,7 +74,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     level = charSkill?.level ? charSkill?.level : 0;
     return (
       <>      
-        <Grid item xs={'auto'}>
+        <Grid item xs={10} md={'auto'}>
           <FormControlLabel 
             control={
               <Checkbox 
