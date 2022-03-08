@@ -26,6 +26,7 @@ const FormInput: FC<FormInputProps> = ({name, formControlName, value, multilineR
   }   
   return (
     <TextField 
+      inputProps={{ tabIndex: 0 }}
       id={id}
       label={name}
       multiline={multilineRows ? true : false}
