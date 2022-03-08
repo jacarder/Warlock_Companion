@@ -7,6 +7,7 @@ import { AuthContext } from '../../config/auth-context';
 import * as uuid from 'uuid';
 import SkillService from '../../services/SkillService';
 import { unionBy, merge, uniqBy } from 'lodash';
+import FormInput from '../FormInput/FormInput';
 
 interface CharacterInfoProps {
   characterId: string,
@@ -42,29 +43,6 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
       setCharacter(data);
     });
   }, [characterId])
-  
-  const createFormField = (
-    name: string | null, 
-    formControlName: string, 
-    value: string | number | undefined = '', 
-    multilineRows: number = 1,
-    type: React.HTMLInputTypeAttribute = 'text'
-  ) => {
-    const id = formControlName.replace('', '-').toLowerCase();
-    return (
-      <TextField 
-        id={id}
-        label={name}
-        multiline={multilineRows ? true : false}
-        maxRows={multilineRows}
-        fullWidth
-        name={formControlName}
-        value={value || ''}
-        onChange={handleFormChange}
-        type={type}
-      />
-    )
-  }
 
   const createFormCheckBox = (displayName: string, name: string) => {
     const charSkill = character?.skills?.find((skill) => skill.name === name)
@@ -118,8 +96,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     )
   }
 
-  const handleFormChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    const { name, value } = event.target;
+  const handleInputChange = (name: string, value: string | number) => {
     setCharacter({
       ...character,
       skills: [...character?.skills || []],
@@ -188,10 +165,10 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={5}>
-            {createFormField("Name", "name", character?.name)}
-            {createFormField("Community", "community", character?.community)}
-            {createFormField("Career", "career", character?.career)}
-            {createFormField("Past Careers", "pastCareers", character?.pastCareers, 4)}
+          <FormInput name="Name" formControlName="name" value={character?.name} onInputChange={handleInputChange}/>
+          <FormInput name="Community" formControlName="community" value={character?.community} onInputChange={handleInputChange}/>
+          <FormInput name="Career" formControlName="career" value={character?.career} onInputChange={handleInputChange}/>
+          <FormInput name="Past Careers" formControlName="pastCareers" value={character?.pastCareers} onInputChange={handleInputChange}/>
         </Grid>
         {/* TODO Make divider responsive 
         <Divider orientation="vertical" flexItem>
@@ -210,16 +187,16 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           }}/>
         </Grid>          
         <Grid item xs={12} md={5}>
-          {createFormField("Background", "background", character?.background, 10)}
+          <FormInput name="Background" formControlName="background" value={character?.background} multilineRows={10} onInputChange={handleInputChange}/>
         </Grid>
         <Grid item xs={5}>
-          {createFormField("Stamina", "stamina", character?.stamina)}
+          <FormInput name="Stamina" formControlName="stamina" value={character?.stamina} onInputChange={handleInputChange}/>
         </Grid> 
         <Grid item xs={2}>
           {/* spacing added between two fields */}
         </Grid>               
         <Grid item xs={5}>
-          {createFormField("Luck", "luck", character?.luck)}
+          <FormInput name="Luck" formControlName="luck" value={character?.luck} onInputChange={handleInputChange}/>          
         </Grid>                
         <Grid item xs={12} md={5}>
           <Divider>Skills</Divider>
