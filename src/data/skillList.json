@@ -1,126 +1,126 @@
 [
 	{
-		"label": "Apparise",
-		"formControlName": "apparise"
+		"displayName": "Apparise",
+		"name": "apparise"
 	},
 	{
-		"label": "Athletics",
-		"formControlName": "athletics"
+		"displayName": "Athletics",
+		"name": "athletics"
 	},
 	{
-		"label": "Bargain",
-		"formControlName": "bargain"
+		"displayName": "Bargain",
+		"name": "bargain"
 	},
 	{
-		"label": "Blunt",
-		"formControlName": "blunt"
+		"displayName": "Blunt",
+		"name": "blunt"
 	},
 	{
-		"label": "Bow",
-		"formControlName": "bow"
+		"displayName": "Bow",
+		"name": "bow"
 	},
 	{
-		"label": "Brawling",
-		"formControlName": "brawling"
+		"displayName": "Brawling",
+		"name": "brawling"
 	},
 	{
-		"label": "Command",
-		"formControlName": "command"
+		"displayName": "Command",
+		"name": "command"
 	},
 	{
-		"label": "Crossbow",
-		"formControlName": "crossbow"
+		"displayName": "Crossbow",
+		"name": "crossbow"
 	},
 	{
-		"label": "Diplomacy",
-		"formControlName": "diplomacy"
+		"displayName": "Diplomacy",
+		"name": "diplomacy"
 	},
 	{
-		"label": "Disguise",
-		"formControlName": "disguise"
+		"displayName": "Disguise",
+		"name": "disguise"
 	},
 	{
-		"label": "Dodge",
-		"formControlName": "dodge"
+		"displayName": "Dodge",
+		"name": "dodge"
 	},
 	{
-		"label": "Endurance",
-		"formControlName": "endurance"
+		"displayName": "Endurance",
+		"name": "endurance"
 	},
 	{
-		"label": "History",
-		"formControlName": "history"
+		"displayName": "History",
+		"name": "history"
 	},
 	{
-		"label": "Incantation",
-		"formControlName": "incantation"
+		"displayName": "Incantation",
+		"name": "incantation"
 	},
 	{
-		"label": "Intimidate",
-		"formControlName": "intimidate"
+		"displayName": "Intimidate",
+		"name": "intimidate"
 	},
 	{
-		"label": "Large Blade",
-		"formControlName": "largeBlade"
+		"displayName": "Large Blade",
+		"name": "largeBlade"
 	},
 	{
-		"label": "Lie",
-		"formControlName": "lie"
+		"displayName": "Lie",
+		"name": "lie"
 	},
 	{
-		"label": "Medicine",
-		"formControlName": "medicine"
+		"displayName": "Medicine",
+		"name": "medicine"
 	},
 	{
-		"label": "Navigation",
-		"formControlName": "navigation"
+		"displayName": "Navigation",
+		"name": "navigation"
 	},
 	{
-		"label": "Ostler",
-		"formControlName": "ostler"
+		"displayName": "Ostler",
+		"name": "ostler"
 	},
 	{
-		"label": "Persuasion",
-		"formControlName": "persuasion"
+		"displayName": "Persuasion",
+		"name": "persuasion"
 	},
 	{
-		"label": "Pole Arm",
-		"formControlName": "poleArm"
+		"displayName": "Pole Arm",
+		"name": "poleArm"
 	},
 	{
-		"label": "Repair",
-		"formControlName": "repair"
+		"displayName": "Repair",
+		"name": "repair"
 	},
 	{
-		"label": "Sleight of Hand",
-		"formControlName": "sleightOfHand"
+		"displayName": "Sleight of Hand",
+		"name": "sleightOfHand"
 	},
 	{
-		"label": "Small Blade",
-		"formControlName": "smallBlade"
+		"displayName": "Small Blade",
+		"name": "smallBlade"
 	},
 	{
-		"label": "Spot",
-		"formControlName": "spot"
+		"displayName": "Spot",
+		"name": "spot"
 	},
 	{
-		"label": "Stealth",
-		"formControlName": "stealth"
+		"displayName": "Stealth",
+		"name": "stealth"
 	},
 	{
-		"label": "Streetwise",
-		"formControlName": "streetwise"
+		"displayName": "Streetwise",
+		"name": "streetwise"
 	},
 	{
-		"label": "Survival",
-		"formControlName": "survival"
+		"displayName": "Survival",
+		"name": "survival"
 	},
 	{
-		"label": "Swimming",
-		"formControlName": "swimming"
+		"displayName": "Swimming",
+		"name": "swimming"
 	},
 	{
-		"label": "Thrown",
-		"formControlName": "thrown"
+		"displayName": "Thrown",
+		"name": "thrown"
 	}
 ]

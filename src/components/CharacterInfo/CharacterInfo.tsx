@@ -1,11 +1,12 @@
 import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
-import { ICharacterData, ISkill } from '../../models/character.model';
+import { ICharacterData, ICharacterSkill, ISkill } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
 import { AuthContext } from '../../config/auth-context';
 import * as uuid from 'uuid';
 import SkillService from '../../services/SkillService';
+import { unionBy, merge, uniqBy } from 'lodash';
 
 interface CharacterInfoProps {
   characterId: string,
@@ -22,26 +23,22 @@ const Grid = styled(MuiGrid)(({ theme }) => ({
 
 const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
-  const [skills, setSkills] = useState<{group1: ISkill[], group2: ISkill[]} | undefined>(undefined);
+  const [skills, setSkills] = useState<{group1: ICharacterSkill[] | ISkill[], group2: ICharacterSkill[] | ISkill[]} | undefined>(undefined);
   const auth = useContext(AuthContext);
   const userId = auth.user?.uid as string;
   useEffect(() => {
-    let skillList = SkillService.getSkillList();
+    const skillList = SkillService.getSkillList().sort();
+    const characterSkillList = merge((character?.skills || []), skillList) as ICharacterSkill[];
     const middle = Math.ceil(skillList.length / 2);
-    console.dir(
-      {
-        group1: [...skillList.slice(0, middle)],
-        group2: [...skillList.slice(middle)]
-      }
-    )
     setSkills({
-      group1: [...skillList.slice(0, middle)],
-      group2: [...skillList.slice(middle)]
-    })
+      group1: [...characterSkillList.slice(0, middle)],
+      group2: [...characterSkillList.slice(middle)]
+    }) 
+    //  TODO find out why we can't look at properties of objects to call useEffect
   }, [])
   
   useEffect(() => {
-    PlayerService.getPlayerCharacterData(userId, characterId).then((data) => {
+    PlayerService.getPlayerCharacterData(userId, characterId).then((data) => {  
       setCharacter(data);
     });
   }, [characterId])
@@ -69,40 +66,49 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     )
   }
 
-  const createFormCheckBox = (label: string, formControlName: string, isChecked: boolean, value: string | number | undefined = '') => {
-    const id = label.replace('', '-').toLowerCase(),
-    checkboxName = `${formControlName}-checkbox`,
-    inputName = `${formControlName}-input`
+  const createFormCheckBox = (displayName: string, name: string) => {
+    const charSkill = character?.skills?.find((skill) => skill.name === name)
+    const checkboxIdName = `${name}-checkbox`,
+    inputIdName = name,
+    checked = charSkill?.isChecked ? charSkill?.isChecked : false,
+    level = charSkill?.level ? charSkill?.level : 0;
     return (
       <>      
         <Grid item xs={'auto'}>
           <FormControlLabel 
             control={
               <Checkbox 
-                id={id} 
-                name={checkboxName}
-                checked={isChecked}
+                id={checkboxIdName} 
+                name={checkboxIdName}
+                checked={checked}
               />} 
-            label={label} 
+            label={displayName} 
             sx={{overflowWrap: 'anywhere'}}
           />
         </Grid>
-        <Grid item xs={2}> 
-          {createFormField(null, inputName, value, 1, 'number')}
+        <Grid item xs={2}>
+          <TextField 
+            id={inputIdName}
+            fullWidth
+            name={inputIdName}
+            value={level}
+            onChange={handleSkillInputChange}
+            type={'number'}
+          />
         </Grid>
       </>
     )
   }
 
-  const createSkillList = (skillList: ISkill[] | undefined) => {
+  const createSkillList = (skillList: ICharacterSkill[] | ISkill[] | undefined) => {
     return (
       <> 
         {
           skillList?.length ?
           skillList?.map((skill) => {
             return (
-              <Grid key={skill.label} container direction="row" alignItems="center" justifyContent={'space-between'}>
-                {createFormCheckBox(skill.label, skill.formControlName, true, 1)}
+              <Grid key={skill.name} container direction="row" alignItems="center" justifyContent={'space-between'}>
+                {createFormCheckBox(skill.displayName, skill.name)}
               </Grid>
             )
           }) : null          
@@ -115,9 +121,25 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     const { name, value } = event.target;
     setCharacter({
       ...character,
+      skills: [...character?.skills || []],
       [name]: value
     });
   } 
+
+  const handleSkillInputChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const { name, value } = event.target;
+    const skill = {
+      name: name,
+      level: +value,
+      isChecked: true //  TODO get checkbox based on name-checkbox
+    } as ICharacterSkill;
+    const existingCharSkill = character?.skills?.find((charSkill) => charSkill.name === skill.name);
+    const combinedSkill = merge(existingCharSkill, skill);
+    setCharacter({
+      ...character,
+      skills: unionBy((character?.skills || []), [combinedSkill], 'name')
+    });
+  }   
 
   const handleSubmit = () => {
     
