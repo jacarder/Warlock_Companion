@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter basename="/Warlock_Companion">
-      <App />
+      <SnackbarProvider maxSnack={2}>
+        <App />
+      </SnackbarProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')

@@ -18,8 +18,8 @@ class PlayerService {
 		const data = FirebaseService.getData('character', conditions);
 		return (await data).docs.map(data => data.data() as ICharacterData)[0]
 	}
-	savePlayerCharacter = (userId: string, id: string, data: ICharacterData) => {
-		FirebaseService.saveToDatabase(userId, 'character', id, data);
+	savePlayerCharacter = async (userId: string, id: string, data: ICharacterData): Promise<void> => {
+		return await FirebaseService.saveToDatabase(userId, 'character', id, data);
 	}	
 }
 

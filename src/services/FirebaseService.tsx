@@ -46,9 +46,9 @@ class FirebaseService {
     const q = query(ref, ...constraint);
     return getDocs(q);
   }
-  saveToDatabase = (userId: string, table: string, params: string, data: Object) => {
+  saveToDatabase = (userId: string, table: string, params: string, data: Object): Promise<void> => {
     const db = this.getFirestore();
-    setDoc(doc(db, table, params), {...data, userId: userId})
+    return setDoc(doc(db, table, params), {...data, userId: userId})
   }
 }
 export default new FirebaseService;

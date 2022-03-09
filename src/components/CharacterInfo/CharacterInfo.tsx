@@ -1,6 +1,7 @@
-import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, Backdrop, CircularProgress } from '@mui/material';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
+import MuiSkeleton from '@mui/material/Skeleton';
 import { ICharacterData, ICharacterSkill, ISkill } from '../../models/character.model';
 import PlayerService from '../../services/PlayerService';
 import { AuthContext } from '../../config/auth-context';
@@ -8,6 +9,7 @@ import * as uuid from 'uuid';
 import SkillService from '../../services/SkillService';
 import { unionBy, merge, uniqBy } from 'lodash';
 import FormInput from '../FormInput/FormInput';
+import { useSnackbar, VariantType } from 'notistack';
 
 interface CharacterInfoProps {
   characterId: string,
@@ -22,9 +24,19 @@ const Grid = styled(MuiGrid)(({ theme }) => ({
   },
 }));
 
+const Skeleton = styled(MuiSkeleton)(() => ({
+  height: '100px',
+  width: '100%',
+  marginTop: '-20px',
+  marginBottom: '-20px',
+}));
+
 const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
   const [skills, setSkills] = useState<{group1: ICharacterSkill[] | ISkill[], group2: ICharacterSkill[] | ISkill[]} | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const { enqueueSnackbar } = useSnackbar();
   const auth = useContext(AuthContext);
   const userId = auth.user?.uid as string;
   useEffect(() => {
@@ -39,8 +51,10 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   }, [])
   
   useEffect(() => {
+    setIsLoading(true);
     PlayerService.getPlayerCharacterData(userId, characterId).then((data) => {  
       setCharacter(data);
+      setIsLoading(false);
     });
   }, [characterId])
 
@@ -87,7 +101,11 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           skillList?.map((skill) => {
             return (
               <Grid key={skill.name} container direction="row" alignItems="center" justifyContent={'space-between'}>
-                {createFormCheckBox(skill.displayName, skill.name)}
+                {
+                  isLoading ?
+                  <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/> :
+                  createFormCheckBox(skill.displayName, skill.name)
+                }
               </Grid>
             )
           }) : null          
@@ -137,6 +155,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
 
 
   const handleSubmit = () => {
+    setIsSaving(true)
     const charId = characterId ? characterId : uuid.v4()
     PlayerService.savePlayerCharacter(
       userId, 
@@ -145,8 +164,11 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
         ...character,
         id: charId
       } as ICharacterData)
-    );
-    onSave(charId)
+    ).then(() => {
+      setIsSaving(false);
+      enqueueSnackbar('This is a success message!', { variant: 'success'});
+      onSave(charId);      
+    })
   }
 
   return (
@@ -165,10 +187,25 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={5}>
-          <FormInput name="Name" formControlName="name" value={character?.name} onInputChange={handleInputChange}/>
-          <FormInput name="Community" formControlName="community" value={character?.community} onInputChange={handleInputChange}/>
-          <FormInput name="Career" formControlName="career" value={character?.career} onInputChange={handleInputChange}/>
-          <FormInput name="Past Careers" formControlName="pastCareers" value={character?.pastCareers} onInputChange={handleInputChange}/>
+          {
+            isLoading ? 
+            (
+              <>
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+                <Skeleton />
+              </>
+            ) : 
+            (
+              <>
+                <FormInput name="Name" formControlName="name" value={character?.name} onInputChange={handleInputChange}/>
+                <FormInput name="Community" formControlName="community" value={character?.community} onInputChange={handleInputChange}/>
+                <FormInput name="Career" formControlName="career" value={character?.career} onInputChange={handleInputChange}/>
+                <FormInput name="Past Careers" formControlName="pastCareers" value={character?.pastCareers} onInputChange={handleInputChange}/>
+              </>
+            )
+          }
         </Grid>
         {/* TODO Make divider responsive 
         <Divider orientation="vertical" flexItem>
@@ -187,16 +224,28 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           }}/>
         </Grid>          
         <Grid item xs={12} md={5}>
-          <FormInput name="Background" formControlName="background" value={character?.background} multilineRows={10} onInputChange={handleInputChange}/>
+        {
+            isLoading ? 
+            <Skeleton height="450px" sx={{marginTop: '-100px'}}/> : 
+            <FormInput name="Background" formControlName="background" value={character?.background} multilineRows={10} onInputChange={handleInputChange}/>
+        }          
         </Grid>
         <Grid item xs={5}>
-          <FormInput name="Stamina" formControlName="stamina" value={character?.stamina} onInputChange={handleInputChange}/>
+          {
+            isLoading ? 
+            <Skeleton /> :
+            <FormInput name="Stamina" formControlName="stamina" value={character?.stamina} onInputChange={handleInputChange}/>
+          }
         </Grid> 
         <Grid item xs={2}>
           {/* spacing added between two fields */}
         </Grid>               
         <Grid item xs={5}>
-          <FormInput name="Luck" formControlName="luck" value={character?.luck} onInputChange={handleInputChange}/>          
+          {
+            isLoading ? 
+            <Skeleton /> :
+            <FormInput name="Luck" formControlName="luck" value={character?.luck} onInputChange={handleInputChange}/>          
+          }          
         </Grid>                
         <Grid item xs={12} md={5}>
           <Divider>Skills</Divider>
@@ -219,7 +268,9 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           {createSkillList(skills?.group2)}
         </Grid>
       </Grid>
-      <Button variant="contained" onClick={handleSubmit}>Save Test</Button>
+      <Button variant="contained" onClick={handleSubmit} sx={{maxHeight: 'initial'}}>
+        {isSaving ? (<>Loading <CircularProgress color="inherit" size="20px" sx={{marginLeft: '15px'}}/></>) : "Save"}
+      </Button>
     </Box>
   );
 };
