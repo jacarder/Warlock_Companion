@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/Warlock_Companion/static/css/main.073c9b0a.css",
-    "main.js": "/Warlock_Companion/static/js/main.88f4f487.js",
+    "main.js": "/Warlock_Companion/static/js/main.c683ebe3.js",
     "index.html": "/Warlock_Companion/index.html",
     "main.073c9b0a.css.map": "/Warlock_Companion/static/css/main.073c9b0a.css.map",
-    "main.88f4f487.js.map": "/Warlock_Companion/static/js/main.88f4f487.js.map"
+    "main.c683ebe3.js.map": "/Warlock_Companion/static/js/main.c683ebe3.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.88f4f487.js"
+    "static/js/main.c683ebe3.js"
   ]
 }
