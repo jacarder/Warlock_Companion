@@ -1,6 +1,5 @@
-import { Box } from '@mui/material';
+import { Box} from '@mui/material';
 import { FC, useState } from 'react';
-import { ICharacter } from '../../models/character.model';
 import CharacterInfo from '../CharacterInfo/CharacterInfo';
 import CharacterSelection from '../CharacterSelection/CharacterSelection';
 

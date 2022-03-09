@@ -1,4 +1,4 @@
-import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, Backdrop, CircularProgress } from '@mui/material';
+import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, Backdrop, CircularProgress, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
 import MuiSkeleton from '@mui/material/Skeleton';
@@ -165,9 +165,12 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
         id: charId
       } as ICharacterData)
     ).then(() => {
-      setIsSaving(false);
-      enqueueSnackbar('This is a success message!', { variant: 'success'});
+      enqueueSnackbar('Character Saved!', { variant: 'success', });
       onSave(charId);      
+    }).catch(() => {
+      enqueueSnackbar('Error while saving character.', { variant: 'error', });
+    }).finally(() => {
+      setIsSaving(false);
     })
   }
 
@@ -178,6 +181,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
         //ml: 3,
 
         '& .MuiTextField-root': { mb: 1, mt: 1 },
+        mb: 6 // 6 to allow space for button bar
       }}
     >
       <Grid container spacing={2}>
@@ -268,9 +272,13 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           {createSkillList(skills?.group2)}
         </Grid>
       </Grid>
-      <Button variant="contained" onClick={handleSubmit} sx={{maxHeight: 'initial'}}>
-        {isSaving ? (<>Loading <CircularProgress color="inherit" size="20px" sx={{marginLeft: '15px'}}/></>) : "Save"}
-      </Button>
+      <Paper sx={{ position: 'fixed', bottom: 0, left: '200px', right: '200px' }} elevation={3}>
+        <BottomNavigation>
+          <Button variant="contained" onClick={handleSubmit} sx={{maxHeight: 'initial'}} disabled={isLoading || isSaving}>
+            {isSaving ? (<>Loading <CircularProgress color="inherit" size="20px" sx={{marginLeft: '15px'}}/></>) : "Save"}
+          </Button>
+        </BottomNavigation>
+      </Paper>      
     </Box>
   );
 };
