@@ -1,4 +1,4 @@
-import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, Backdrop, CircularProgress, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import { TextField, Box, Typography, Divider, styled, Button, Checkbox, FormControlLabel, Backdrop, CircularProgress, BottomNavigation, Paper, Grow, Container } from '@mui/material';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import MuiGrid from '@mui/material/Grid';
 import MuiSkeleton from '@mui/material/Skeleton';
@@ -7,9 +7,9 @@ import PlayerService from '../../services/PlayerService';
 import { AuthContext } from '../../config/auth-context';
 import * as uuid from 'uuid';
 import SkillService from '../../services/SkillService';
-import { unionBy, merge, uniqBy } from 'lodash';
+import { unionBy, merge } from 'lodash';
 import FormInput from '../FormInput/FormInput';
-import { useSnackbar, VariantType } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 interface CharacterInfoProps {
   characterId: string,
@@ -30,6 +30,15 @@ const Skeleton = styled(MuiSkeleton)(() => ({
   marginTop: '-20px',
   marginBottom: '-20px',
 }));
+
+/**
+ * Extended Grow component to allow more seemless transitions.
+ * Skeleton is set to instantly Grow out, then we keep out position of content so it doesn't look like it 
+ * moves up weirdly.
+ */
+
+const GrowSkeleton = (props: any) => (<Grow in={props.isLoading} timeout={{exit: 0}} unmountOnExit><Grid>{props.children}</Grid></Grow>)
+const GrowContent = (props: any) => (<Grow in={!props.isLoading} timeout={{enter: 250, exit: 0}} unmountOnExit><Grid>{props.children}</Grid></Grow>)
 
 const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   const [character, setCharacter] = useState<ICharacterData | undefined>(undefined)
@@ -65,8 +74,8 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
     checked = charSkill?.isChecked ? charSkill?.isChecked : false,
     level = charSkill?.level ? charSkill?.level : 0;
     return (
-      <>      
-        <Grid item xs={10} md={'auto'}>
+      <Grid container alignItems="center" justifyContent={'space-between'}>      
+        <Grid item xs={9} md={'auto'} flexBasis="content">
           <FormControlLabel 
             control={
               <Checkbox 
@@ -79,7 +88,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
             sx={{overflowWrap: 'anywhere'}}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={3} md={2}>
           <TextField 
             id={inputIdName}
             fullWidth
@@ -89,7 +98,7 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
             type={'number'}
           />
         </Grid>
-      </>
+      </Grid>
     )
   }
 
@@ -100,13 +109,15 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           skillList?.length ?
           skillList?.map((skill) => {
             return (
-              <Grid key={skill.name} container direction="row" alignItems="center" justifyContent={'space-between'}>
-                {
-                  isLoading ?
-                  <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/> :
-                  createFormCheckBox(skill.displayName, skill.name)
-                }
-              </Grid>
+              <Box key={skill.name}>
+                {/** TODO extract Skeleton out to optimize performance instead of loading all skills with skeleton */}
+                <GrowSkeleton isLoading={isLoading}>
+                  <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/>
+                </GrowSkeleton>
+                <GrowContent isLoading={isLoading}>
+                  {createFormCheckBox(skill.displayName, skill.name)}
+                </GrowContent>
+              </Box>
             )
           }) : null          
         }
@@ -191,25 +202,18 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={5}>
-          {
-            isLoading ? 
-            (
-              <>
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-              </>
-            ) : 
-            (
-              <>
-                <FormInput name="Name" formControlName="name" value={character?.name} onInputChange={handleInputChange}/>
-                <FormInput name="Community" formControlName="community" value={character?.community} onInputChange={handleInputChange}/>
-                <FormInput name="Career" formControlName="career" value={character?.career} onInputChange={handleInputChange}/>
-                <FormInput name="Past Careers" formControlName="pastCareers" value={character?.pastCareers} onInputChange={handleInputChange}/>
-              </>
-            )
-          }
+          <GrowSkeleton isLoading={isLoading}>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </GrowSkeleton>
+          <GrowContent isLoading={isLoading}>
+            <FormInput name="Name" formControlName="name" value={character?.name} onInputChange={handleInputChange}/>
+            <FormInput name="Community" formControlName="community" value={character?.community} onInputChange={handleInputChange}/>
+            <FormInput name="Career" formControlName="career" value={character?.career} onInputChange={handleInputChange}/>
+            <FormInput name="Past Careers" formControlName="pastCareers" value={character?.pastCareers} onInputChange={handleInputChange}/>
+          </GrowContent> 
         </Grid>
         {/* TODO Make divider responsive 
         <Divider orientation="vertical" flexItem>
@@ -228,28 +232,31 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
           }}/>
         </Grid>          
         <Grid item xs={12} md={5}>
-        {
-            isLoading ? 
-            <Skeleton height="450px" sx={{marginTop: '-100px'}}/> : 
+          <GrowSkeleton isLoading={isLoading}>
+            <Skeleton height="450px" sx={{marginTop: '-100px'}}/>
+          </GrowSkeleton>
+          <GrowContent isLoading={isLoading}>
             <FormInput name="Background" formControlName="background" value={character?.background} multilineRows={10} onInputChange={handleInputChange}/>
-        }          
+          </GrowContent>
         </Grid>
         <Grid item xs={5}>
-          {
-            isLoading ? 
-            <Skeleton /> :
+          <GrowSkeleton isLoading={isLoading}>
+            <Skeleton />
+          </GrowSkeleton>
+          <GrowContent isLoading={isLoading}>          
             <FormInput name="Stamina" formControlName="stamina" value={character?.stamina} onInputChange={handleInputChange}/>
-          }
+          </GrowContent>
         </Grid> 
         <Grid item xs={2}>
           {/* spacing added between two fields */}
         </Grid>               
         <Grid item xs={5}>
-          {
-            isLoading ? 
-            <Skeleton /> :
+          <GrowSkeleton isLoading={isLoading}>
+            <Skeleton />
+          </GrowSkeleton>
+          <GrowContent isLoading={isLoading}>
             <FormInput name="Luck" formControlName="luck" value={character?.luck} onInputChange={handleInputChange}/>          
-          }          
+          </GrowContent>
         </Grid>                
         <Grid item xs={12} md={5}>
           <Divider>Skills</Divider>
