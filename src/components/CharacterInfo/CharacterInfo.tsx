@@ -105,15 +105,18 @@ const CharacterInfo: FC<CharacterInfoProps> = ({characterId, onSave}) => {
   const createSkillList = (skillList: ICharacterSkill[] | ISkill[] | undefined) => {
     return (
       <> 
+        {/** showing only 4 skeletons for better performance instead of one for each skill */}
+        <GrowSkeleton isLoading={isLoading}>
+          <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/>
+          <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/>
+          <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/>
+          <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/>
+        </GrowSkeleton>       
         {
           skillList?.length ?
           skillList?.map((skill) => {
             return (
               <Box key={skill.name}>
-                {/** TODO extract Skeleton out to optimize performance instead of loading all skills with skeleton */}
-                <GrowSkeleton isLoading={isLoading}>
-                  <Skeleton height="25px" sx={{marginTop: 0, marginBottom: 0}}/>
-                </GrowSkeleton>
                 <GrowContent isLoading={isLoading}>
                   {createFormCheckBox(skill.displayName, skill.name)}
                 </GrowContent>
