@@ -1,7 +1,7 @@
 import './App.css';
 import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Menu from './components/Menu/Menu';
-import { Box } from '@mui/material';
+import { Box, ThemeProvider } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { DrawerHeader } from './components/Menu/Menu.styles';
 import FirebaseService from './services/FirebaseService';
@@ -12,6 +12,7 @@ import Market from './components/Market/Market';
 import AuthProvider from './config/auth-context-provider';
 import { MenuPages } from './models/menu.constants';
 import Login from './components/Login/Login';
+import theme from './theme';
 
 const App = () => {
   return (
@@ -49,13 +50,15 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
 
 const Layout = () => {
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Menu/>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <Outlet />
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex' }}>
+        <Menu/>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          <Outlet />
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   )
 }
 
